@@ -1,0 +1,22 @@
+{
+    "configurations": [
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:crossnotes}",
+            "name": "Debug crossnotes",
+            "program": "${workspaceFolder:crossnotes}/.build/debug/crossnotes",
+            "preLaunchTask": "swift: Build Debug crossnotes"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:crossnotes}",
+            "name": "Release crossnotes",
+            "program": "${workspaceFolder:crossnotes}/.build/release/crossnotes",
+            "preLaunchTask": "swift: Build Release crossnotes"
+        }
+    ]
+}
