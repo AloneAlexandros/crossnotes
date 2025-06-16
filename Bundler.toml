@@ -1,0 +1,6 @@
+format_version = 2
+
+[apps.crossnotes]
+identifier = 'com.example.crossnotes'
+product = 'crossnotes'
+version = '0.1.0'
