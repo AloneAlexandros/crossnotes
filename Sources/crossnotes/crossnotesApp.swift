@@ -3,10 +3,17 @@ import DefaultBackend
 
 @main
 struct crossnotesApp: App {
+   
     var body: some Scene {
+        @State var database = Database()
         WindowGroup("crossnotes") {
-            Text("Hello, World!")
-                .padding()
+            HelloWorldView()
         }
+    }
+}
+
+struct HelloWorldView : View{
+    var body: some View{
+        Text("haiiiiiiii")
     }
 }
