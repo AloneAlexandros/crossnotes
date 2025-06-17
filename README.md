@@ -1,5 +1,5 @@
 # crossnotes
-crossnotes is a simple notes app built with pure swift and the library [SwiftCrossUI](https://github.com/stackotter/swift-cross-ui) that can run on Mac, Linux and Windows (and soon Android and iOS)
+crossnotes is a simple notes app built with pure swift and the library [SwiftCrossUI](https://github.com/stackotter/swift-cross-ui) that can run on Mac, Linux, Windows and iOS (soon Android)
 ## Features
 - saves notes as .txt files that can be easily synced
 ## Developing

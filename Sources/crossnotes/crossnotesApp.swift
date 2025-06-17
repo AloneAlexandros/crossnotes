@@ -3,9 +3,8 @@ import DefaultBackend
 
 @main
 struct crossnotesApp: App {
-   
+    @State var database = Database()
     var body: some Scene {
-        @State var database = Database()
         WindowGroup("crossnotes") {
             NotesTestView(database: $database)
         }
