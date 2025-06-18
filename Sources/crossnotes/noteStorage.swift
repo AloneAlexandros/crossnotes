@@ -7,6 +7,7 @@ class Database : SwiftCrossUI.ObservableObject
     var savesDirectories: [URL] = [] 
     let configDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent("crossnotes").appendingPathComponent("config")
     let defaultDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent("crossnotes")
+    let configFileURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent("crossnotes").appendingPathComponent("config").appendingPathComponent("config").appendingPathExtension("txt")
 
     init(){
         fetchValidDirectories()
@@ -87,7 +88,6 @@ class Database : SwiftCrossUI.ObservableObject
 
     func fetchValidDirectories()
     {
-        let configFileURL = configDirectory.appendingPathComponent("config").appendingPathExtension("txt")
         //check if config direcory exists and if not create it
         if !FileManager.default.fileExists(atPath: configDirectory.path) {
             do {
@@ -96,7 +96,6 @@ class Database : SwiftCrossUI.ObservableObject
 
                 //make config.txt
                 do {
-                    //FIXME: use addDirectory instead. Using this as an example value
                     try defaultDirectory.path.write(to: configFileURL, atomically: true, encoding: .utf8)
                 } catch {
                     assertionFailure("Failed writing to URL: \(configFileURL), Error: " + error.localizedDescription)
@@ -107,14 +106,8 @@ class Database : SwiftCrossUI.ObservableObject
         }
 
         //fetch note directories
-        var configString = ""
-        do{
-           configString = try String(contentsOf: configFileURL, encoding: .utf8)  
-        } catch {
-            print(error.localizedDescription)
-        }
-        let splitConfigString = configString.split(whereSeparator: \.isNewline)
-        for directory in splitConfigString{
+        
+        for directory in splitConfigString(){
             let directoryURL = URL(string: "file://" + directory)!
             savesDirectories.append(directoryURL)
         }
@@ -122,9 +115,31 @@ class Database : SwiftCrossUI.ObservableObject
     }
 
 
-    //TODO: make this actually work or smth
-    func addDirectory()
+    func getFullConfigString() -> String
     {
+        var configString = ""
+        do{
+           configString = try String(contentsOf: configFileURL, encoding: .utf8)  
+        } catch {
+            print(error.localizedDescription)
+        }
+        return configString
+    }
 
+    func splitConfigString() -> [String.SubSequence]
+    {
+        let splitConfigString = getFullConfigString().split(whereSeparator: \.isNewline)
+        return splitConfigString
+    }
+
+    //TODO: make this actually work or smth
+    func addDirectory(directory: String)
+    {
+        let newDirectories = getFullConfigString() + "\n" + directory
+        do {
+            try newDirectories.write(to: configFileURL, atomically: true, encoding: .utf8)
+        } catch {
+            assertionFailure("Failed writing to URL: \(configFileURL), Error: " + error.localizedDescription)
+        }
     }
 }
