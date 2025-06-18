@@ -5,4 +5,5 @@ struct Note: Identifiable, Codable {
     var title: String
     var content: String
     var date: Date
+    var noteURL: URL
 }
