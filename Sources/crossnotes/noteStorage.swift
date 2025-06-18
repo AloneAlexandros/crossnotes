@@ -8,8 +8,14 @@ class Database : SwiftCrossUI.ObservableObject
     let configDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent("crossnotes").appendingPathComponent("config")
     let defaultDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent("crossnotes")
     let configFileURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent("crossnotes").appendingPathComponent("config").appendingPathComponent("config").appendingPathExtension("txt")
+    @SwiftCrossUI.Published var configString: [String.SubSequence] = []
 
     init(){
+        initialize()
+    }
+
+    func initialize()
+    {
         fetchValidDirectories()
         //make sure the folders exist
         for directory in savesDirectories{
@@ -22,6 +28,8 @@ class Database : SwiftCrossUI.ObservableObject
                 }
             }
         }
+        //FIXME: there's gotta be a better solution right?
+        self.configString = splitConfigString()
         loadNotes()
     }
 
@@ -49,6 +57,7 @@ class Database : SwiftCrossUI.ObservableObject
 
     func loadNotes()
     {
+        notes = []
         for directory in savesDirectories{
             do {
                 let items = try FileManager.default.contentsOfDirectory(atPath: directory.path).filter{ $0.hasSuffix(".txt")}
@@ -106,7 +115,7 @@ class Database : SwiftCrossUI.ObservableObject
         }
 
         //fetch note directories
-        
+        savesDirectories = []
         for directory in splitConfigString(){
             let directoryURL = URL(string: "file://" + directory)!
             savesDirectories.append(directoryURL)
@@ -132,17 +141,7 @@ class Database : SwiftCrossUI.ObservableObject
         return splitConfigString
     }
 
-    func addDirectory(directory: String)
-    {
-        let newDirectories = getFullConfigString() + "\n" + directory
-        do {
-            try newDirectories.write(to: configFileURL, atomically: true, encoding: .utf8)
-        } catch {
-            assertionFailure("Failed writing to URL: \(configFileURL), Error: " + error.localizedDescription)
-        }
-    }
-
-    func updateDirectories(directories: [String])
+    func updateDirectories(directories: [String.SubSequence])
     {
         var newDirectories = ""
         for directory in directories{
@@ -153,5 +152,6 @@ class Database : SwiftCrossUI.ObservableObject
         } catch {
             assertionFailure("Failed writing to config: \(configFileURL), Error: " + error.localizedDescription)
         }
+        initialize()
     }
 }
