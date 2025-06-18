@@ -132,7 +132,6 @@ class Database : SwiftCrossUI.ObservableObject
         return splitConfigString
     }
 
-    //TODO: make this actually work or smth
     func addDirectory(directory: String)
     {
         let newDirectories = getFullConfigString() + "\n" + directory
@@ -140,6 +139,19 @@ class Database : SwiftCrossUI.ObservableObject
             try newDirectories.write(to: configFileURL, atomically: true, encoding: .utf8)
         } catch {
             assertionFailure("Failed writing to URL: \(configFileURL), Error: " + error.localizedDescription)
+        }
+    }
+
+    func updateDirectories(directories: [String])
+    {
+        var newDirectories = ""
+        for directory in directories{
+            newDirectories += "\n" + directory
+        }
+        do {
+            try newDirectories.write(to: configFileURL, atomically: true, encoding: .utf8)
+        } catch {
+            assertionFailure("Failed writing to config: \(configFileURL), Error: " + error.localizedDescription)
         }
     }
 }
