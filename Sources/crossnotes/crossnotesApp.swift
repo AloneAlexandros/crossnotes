@@ -33,7 +33,8 @@ struct MainView: View{
                         VStack{
                             Text(note.title)
                                 .font(.sidebarTitle)
-                            Text(note.content.count > 20 ? String(note.content.prefix(20)) + "..." : note.content)
+                            let trimmed = note.content.replacingOccurrences(of: "\n", with: " ")
+                            Text(note.content.count > 20 ? String(trimmed.prefix(20)) + "..." : trimmed)
                         }
                     }.onTapGesture {
                         selectedNote = note
@@ -46,7 +47,8 @@ struct MainView: View{
             if(!creatingNote)
             {
                 if selectedNote != nil{
-                    NoteView(note: Binding($selectedNote)!, database: $database)
+                    NoteView(note: Binding($selectedNote)!, database: $database, currentNote: $selectedNote)
+                        .padding(5)
                 }else{
                     Text("^-ω-^")
                 }
@@ -63,16 +65,27 @@ struct NoteView: View{
     @Binding var database: Database
     @State var previousNoteName = ""
     @State var editingTitle = false
+    @Binding var currentNote: Note?
     var body: some View{
         //TODO: note deleting!
         if(!editingTitle)
         {
             HStack{
+                Spacer()
                 Text(note.title)
                     .font(.noteTitle)
                     .onTapGesture {
                         editingTitle = true
                     }  
+                Spacer()
+                Button("🗑️")
+                {
+                    database.deleteNote(noteURL: note.noteURL)
+                        currentNote = nil
+                }
+                    .foregroundColor(Color.red)
+                    .font(.noteTitle)
+                    .padding(.trailing, 5)
             }
         } else {
             //TODO: add title editing functionality
