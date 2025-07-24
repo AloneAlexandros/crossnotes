@@ -7,10 +7,54 @@ struct crossnotesApp: App {
     @State var database = Database()
     var body: some Scene {
         WindowGroup("crossnotes") {
+            MainView(database: $database)
             // NotesTestView(database: $database)
             // NoteCreationView(database: $database)
-            DirectoryEditView(database: $database)
+            // DirectoryEditView(database: $database)
         }
+    }
+}
+
+struct MainView: View{
+    @State var selectedNote: Note?
+    @Binding var database: Database
+    var body: some View{
+        NavigationSplitView(sidebar: {
+            ScrollView{
+                ForEach(database.notes){ note in
+                    ZStack{
+                        RoundedRectangle(cornerRadius: 10)
+                            .foregroundColor(selectedNote?.title == note.title ? Color.gray.opacity(0.5) : Color.black.opacity(0))
+                        VStack{
+                            Text(note.title)
+                                .emphasized()
+                            Text(note.content)
+                        }
+                    }.onTapGesture {
+                            selectedNote = note
+                    }
+                    .frame(width: 200, height: 80)
+                }.padding(5)
+            }
+            
+        }, detail: {
+            if selectedNote != nil{
+                NoteView(note: Binding($selectedNote)!)
+            }else{
+                Text("empty as hell")
+            }
+        })
+    }
+}
+
+struct NoteView: View{
+    //this will be force unwrapped
+    @Binding var note: Note
+    var body: some View{
+        Text(note.title)
+            .font(.noteTitle)
+        TextEditor(text: $note.content)
+            .padding(.bottom, 20)
     }
 }
 
