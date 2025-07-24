@@ -18,8 +18,13 @@ struct crossnotesApp: App {
 struct MainView: View{
     @State var selectedNote: Note?
     @Binding var database: Database
+    @State var creatingNote = false
     var body: some View{
         NavigationSplitView(sidebar: {
+            Button("+ New note")
+            {
+                creatingNote = true
+            }.padding(.top, 5)
             ScrollView{
                 ForEach(database.notes){ note in
                     ZStack{
@@ -31,17 +36,22 @@ struct MainView: View{
                             Text(note.content.count > 20 ? String(note.content.prefix(20)) + "..." : note.content)
                         }
                     }.onTapGesture {
-                            selectedNote = note
+                        selectedNote = note
                     }
                     .frame(width: 200, height: 80)
                 }.padding(5)
             }
             
         }, detail: {
-            if selectedNote != nil{
-                NoteView(note: Binding($selectedNote)!, database: $database)
+            if(!creatingNote)
+            {
+                if selectedNote != nil{
+                    NoteView(note: Binding($selectedNote)!, database: $database)
+                }else{
+                    Text("^-ω-^")
+                }
             }else{
-                Text("^-ω-^")
+                NoteCreationView(database: $database, currentNote: $selectedNote, creatingNote: $creatingNote)
             }
         })
     }
@@ -54,13 +64,17 @@ struct NoteView: View{
     @State var previousNoteName = ""
     @State var editingTitle = false
     var body: some View{
+        //TODO: note deleting!
         if(!editingTitle)
         {
-            Text(note.title)
-            .font(.noteTitle)
-            .onTapGesture {
-                editingTitle = true
+            HStack{
+                Text(note.title)
+                    .font(.noteTitle)
+                    .onTapGesture {
+                        editingTitle = true
+                    }  
             }
+            
         } else {
             //TODO: add title editing functionality
             TextField(text: $note.title)
@@ -98,6 +112,8 @@ struct NoteCreationView: View{
     @Binding var database: Database
     @State var noteTitle = ""
     @State var chosenFolder: URL? = nil
+    @Binding var currentNote: Note?
+    @Binding var creatingNote: Bool
     var body: some View{
         TextField("Note title", text: $noteTitle)
         Picker(of: database.savesDirectories, selection: $chosenFolder)
@@ -105,7 +121,8 @@ struct NoteCreationView: View{
         if chosenFolder != nil && noteTitle != "" && nameExists.count == 0{
             Button("Create note", action: {
                 database.createNote(title: noteTitle, folder: chosenFolder!)
-                //TODO: navigate away
+                currentNote = database.notes[0]
+                creatingNote = false
             })
         } else if nameExists.count != 0{
             Text("Note with the same name already exists")

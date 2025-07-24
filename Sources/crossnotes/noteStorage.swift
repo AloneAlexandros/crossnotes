@@ -44,6 +44,7 @@ class Database : SwiftCrossUI.ObservableObject
         }
         //add note in the notes array for the app to see
         notes.append(Note(title: title, content: "", date: fileModificationDate(url: filePath)!, noteURL: filePath))
+        loadNotes()
     }
 
     func saveNote(note: Note)
