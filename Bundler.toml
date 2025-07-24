@@ -4,3 +4,4 @@ format_version = 2
 identifier = 'com.example.crossnotes'
 product = 'crossnotes'
 version = '0.1.0'
+icon = "crossnotes.png"
