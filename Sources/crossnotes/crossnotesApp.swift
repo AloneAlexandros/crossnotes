@@ -27,8 +27,8 @@ struct MainView: View{
                             .foregroundColor(selectedNote?.title == note.title ? Color.gray.opacity(0.5) : Color.black.opacity(0))
                         VStack{
                             Text(note.title)
-                                .emphasized()
-                            Text(note.content)
+                                .font(.sidebarTitle)
+                            Text(note.content.count > 20 ? String(note.content.prefix(20)) + "..." : note.content)
                         }
                     }.onTapGesture {
                             selectedNote = note
@@ -39,9 +39,9 @@ struct MainView: View{
             
         }, detail: {
             if selectedNote != nil{
-                NoteView(note: Binding($selectedNote)!)
+                NoteView(note: Binding($selectedNote)!, database: $database)
             }else{
-                Text("empty as hell")
+                Text("^-ω-^")
             }
         })
     }
@@ -50,11 +50,35 @@ struct MainView: View{
 struct NoteView: View{
     //this will be force unwrapped
     @Binding var note: Note
+    @Binding var database: Database
+    @State var previousNoteName = ""
+    @State var editingTitle = false
     var body: some View{
-        Text(note.title)
+        if(!editingTitle)
+        {
+            Text(note.title)
             .font(.noteTitle)
+            .onTapGesture {
+                editingTitle = true
+            }
+        } else {
+            //TODO: add title editing functionality
+            TextField(text: $note.title)
+                .font(.noteTitle)
+                .onSubmit {
+                    editingTitle = false
+                }
+        }
         TextEditor(text: $note.content)
             .padding(.bottom, 20)
+            .onChange(of: note.content) {
+                if(previousNoteName == note.title)
+                {
+                    database.saveNote(note: note)
+                }else{
+                    previousNoteName = note.title
+                }
+            }
     }
 }
 

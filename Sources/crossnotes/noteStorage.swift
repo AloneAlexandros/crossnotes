@@ -53,6 +53,7 @@ class Database : SwiftCrossUI.ObservableObject
         } catch {
             assertionFailure("Failed writing to URL: \(note.noteURL), Error: " + error.localizedDescription)
         }
+        loadNotes()
     }
 
     func loadNotes()
