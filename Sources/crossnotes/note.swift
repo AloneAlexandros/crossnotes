@@ -6,4 +6,5 @@ struct Note: Identifiable, Codable {
     var content: String
     var date: Date
     var noteURL: URL
+    var noteFolder: URL
 }

@@ -43,7 +43,17 @@ class Database : SwiftCrossUI.ObservableObject
             assertionFailure("Failed writing to URL: \(filePath), Error: " + error.localizedDescription)
         }
         //add note in the notes array for the app to see
-        notes.append(Note(title: title, content: "", date: fileModificationDate(url: filePath)!, noteURL: filePath))
+        notes.append(Note(title: title, content: "", date: fileModificationDate(url: filePath)!, noteURL: filePath, noteFolder: folder))
+        loadNotes()
+    }
+
+    func deleteNote(noteURL: URL)
+    {
+        do{
+            try FileManager.default.removeItem(at: noteURL)
+        } catch{
+            print("failed to delete item, \(error)")
+        }
         loadNotes()
     }
 
@@ -75,7 +85,7 @@ class Database : SwiftCrossUI.ObservableObject
                     catch {
                         print("couldn't find file contents???")
                     }
-                    notes.append(Note(title: name, content: contents, date: fileModificationDate(url: filePath)!, noteURL: filePath))
+                    notes.append(Note(title: name, content: contents, date: fileModificationDate(url: filePath)!, noteURL: filePath, noteFolder: directory))
                 }
             } catch {
                 print("missing permission to write this folder")

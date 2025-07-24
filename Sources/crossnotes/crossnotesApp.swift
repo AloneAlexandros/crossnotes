@@ -74,13 +74,21 @@ struct NoteView: View{
                         editingTitle = true
                     }  
             }
-            
         } else {
             //TODO: add title editing functionality
             TextField(text: $note.title)
                 .font(.noteTitle)
                 .onSubmit {
-                    editingTitle = false
+                    //empty names are problematic so let's check that :P
+                    let nameExists = database.notes.filter{ $0.title == note.title}
+                    if(note.title != "" && nameExists.count == 0)
+                    {
+                        database.deleteNote(noteURL: note.noteURL)
+                        database.createNote(title: note.title, folder: note.noteFolder)
+                        note.noteURL = note.noteFolder.appendingPathComponent(note.title).appendingPathExtension("txt")
+                        database.saveNote(note: note)
+                        editingTitle = false
+                    }
                 }
         }
         TextEditor(text: $note.content)
@@ -91,6 +99,7 @@ struct NoteView: View{
                     database.saveNote(note: note)
                 }else{
                     previousNoteName = note.title
+                    editingTitle = false
                 }
             }
     }
