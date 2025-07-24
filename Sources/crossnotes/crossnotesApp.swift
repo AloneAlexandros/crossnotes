@@ -66,11 +66,29 @@ struct NoteView: View{
     @State var previousNoteName = ""
     @State var editingTitle = false
     @Binding var currentNote: Note?
+    @State var editing = false
     var body: some View{
         //TODO: note deleting!
         if(!editingTitle)
         {
             HStack{
+                ZStack{
+                    RoundedRectangle(cornerRadius: 10)
+                    .foregroundColor(editing ? Color.gray.opacity(0.5) : Color.black.opacity(0))
+                    Text("✏️")
+                }.frame(width: 30, height: 30)
+                .onTapGesture {
+                    editing = true
+                }
+                .padding(.trailing, -10)
+                ZStack{
+                    RoundedRectangle(cornerRadius: 10)
+                    .foregroundColor(editing ?  Color.black.opacity(0) : Color.gray.opacity(0.5))
+                    Text("👁️")
+                }.frame(width: 30, height: 30)
+                .onTapGesture {
+                    editing = false
+                }
                 Spacer()
                 Text(note.title)
                     .font(.noteTitle)
@@ -104,7 +122,8 @@ struct NoteView: View{
                     }
                 }
         }
-        TextEditor(text: $note.content)
+        if(editing){
+            TextEditor(text: $note.content)
             .padding(.bottom, 20)
             .onChange(of: note.content) {
                 if(previousNoteName == note.title)
@@ -115,6 +134,12 @@ struct NoteView: View{
                     editingTitle = false
                 }
             }
+        }else{
+            MarkdownText(text: note.content)
+            .padding(.leading, 5)
+            Spacer()
+        }
+        
     }
 }
 

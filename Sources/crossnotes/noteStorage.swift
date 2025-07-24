@@ -36,7 +36,7 @@ class Database : SwiftCrossUI.ObservableObject
     func createNote(title: String, folder: URL)
     {
         //create file for the note
-        let filePath = folder.appendingPathComponent(title).appendingPathExtension("txt")
+        let filePath = folder.appendingPathComponent(title).appendingPathExtension("md")
         do {
             try "".write(to: filePath, atomically: true, encoding: .utf8)
         } catch {
@@ -72,7 +72,7 @@ class Database : SwiftCrossUI.ObservableObject
         notes = []
         for directory in savesDirectories{
             do {
-                let items = try FileManager.default.contentsOfDirectory(atPath: directory.path).filter{ $0.hasSuffix(".txt")}
+                let items = try FileManager.default.contentsOfDirectory(atPath: directory.path).filter{ $0.hasSuffix(".md")}
 
                 for item in items {
                     let name = String(item.prefix(upTo: item.lastIndex { $0 == "." } ?? item.endIndex))
