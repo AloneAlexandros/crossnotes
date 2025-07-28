@@ -8,7 +8,11 @@ jobs:
         - name: Checkout
           uses: actions/checkout@v4
         - name: install bundler
-          run: mint install stackotter/swift-bundler@main
+          run: |
+            git clone https://github.com/stackotter/swift-bundler.git
+            cd swift-bundler
+            swift build -c release
+            echo "$(pwd)/.build/release" >> $GITHUB_PATH
         - name: isntall patchelf
           run: sudo apt install patchelf
         - name: install appimage
