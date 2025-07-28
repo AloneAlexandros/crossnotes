@@ -14,10 +14,8 @@ jobs:
           cp ./swift-bundler /usr/local/bin
        - name: build 
          run: ./swift-bundler bundle -c release
-       - name: checking folders
-         run: ls
-       - name: bai
-         run: echo "Quitting on purpose"
+       - name: select correct folder
+         run: cd .build/bundler
        - name: Zip .app
          run: zip -r crossnotes-mac.zip crossnotes.app
        - name: Upload artifact
