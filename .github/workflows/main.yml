@@ -1,0 +1,44 @@
+name: Crossnotes Build actions
+on: 
+  workflow_dispatch:
+jobs:
+   build-macos:
+     runs-on: macOS-latest
+     steps:
+       - name: checkout
+         uses: actions/checkout@v4
+       - name: download swift-bundler
+         run: |
+          curl -o swift-bundler -L https://github.com/stackotter/swift-bundler/releases/download/v2.0.4/swift-bundler
+          chmod +x ./swift-bundler
+          cp ./swift-bundler /usr/local/bin
+       - name: build 
+         run: ./swift-bundler bundle -c release
+       - name: Zip .app
+         run: zip -r crossnotes-mac.zip crossnotes.app
+       - name: Upload artifact
+         uses: actions/upload-artifact@v2
+         with:
+           name: crossnotes-mac
+           path: ./crossnotes-mac.zip
+   release:
+     runs-on: ubuntu-latest
+     needs: [build-macos]
+     steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+
+      - name: List all downloaded files
+        run: ls -R artifacts
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v0.1.${{ github.run_number }}
+          name: Cross-Platform Release v0.1.${{ github.run_number }}
+          files: artifacts/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
