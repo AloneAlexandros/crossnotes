@@ -19,12 +19,9 @@ jobs:
           with:
             branch: swift-6.1-release
             tag: 6.1-RELEASE
-        - name: install bundler
+        - name: download bundler
           shell: bash
-          run: |
-            git clone https://github.com/stackotter/swift-bundler.git
-            cd swift-bundler
-            swift build
+          run: git clone https://github.com/stackotter/swift-bundler.git
         - name: Cache SwiftPM build
           uses: actions/cache@v4
           with:
@@ -35,6 +32,10 @@ jobs:
             key: windows-swiftpm-${{ hashFiles('Package.resolved') }}
             restore-keys: |
               windows-swiftpm-
+        - name: build bundler
+          run: |
+            cd swift-bundler
+            swift build
         - name: windows sdk
           run: winget install --id Microsoft.WindowsSDK.10.0.17736 --accept-source-agreements --accept-package-agreements
         - name: build 
@@ -56,12 +57,8 @@ jobs:
           run: |
             sudo apt update
             sudo apt install libgtk-4-dev clang
-        - name: install bundler
-          run: |
-            git clone https://github.com/stackotter/swift-bundler.git
-            cd swift-bundler
-            swift build
-            echo "$(pwd)/.build/debug" >> $GITHUB_PATH
+        - name: download bundler
+          run: git clone https://github.com/stackotter/swift-bundler.git
         - name: Cache SwiftPM build
           uses: actions/cache@v4
           with:
@@ -72,6 +69,11 @@ jobs:
             key: linux-swiftpm-${{ hashFiles('Package.resolved') }}
             restore-keys: |
               linux-swiftpm-
+        - name: build bundler
+          run: |
+            cd swift-bundler
+            swift build
+            echo "$(pwd)/.build/debug" >> $GITHUB_PATH
         - name: isntall patchelf
           run: sudo apt install patchelf
         - name: install appimage
