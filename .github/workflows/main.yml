@@ -25,9 +25,10 @@ jobs:
             git clone https://github.com/stackotter/swift-bundler.git
             cd swift-bundler
             swift build
-            echo "$(pwd)/.build/debug" >> $GITHUB_PATH
+            cd .build/debug
+            ls
         - name: build 
-          run: swift-bundler bundle -c release
+          run: ./swift-bundler/.build/debug/swift-bundler bundle -c release
         - name: Upload artifact
           uses: actions/upload-artifact@v4
           with:
