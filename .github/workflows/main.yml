@@ -87,7 +87,7 @@ jobs:
            path: .build/bundler/crossnotes-mac.zip
   release:
      runs-on: ubuntu-latest
-     needs: [build-macos, build-linux]
+     needs: [build-macos, build-linux, build-windows]
      steps:
       - name: Download all artifacts
         uses: actions/download-artifact@v4
