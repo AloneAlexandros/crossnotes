@@ -8,7 +8,7 @@ on:
 permissions: write-all
 jobs:
   build-windows:
-    runs-on: windows-latest
+    runs-on: windows-2025
     steps:
         - name: checkout
           uses: actions/checkout@v4
@@ -35,6 +35,8 @@ jobs:
             git clone https://github.com/stackotter/swift-bundler.git
             cd swift-bundler
             swift build
+        - name: windows sdk
+          run: winget install --id Microsoft.WindowsSDK.10.0.17736 --accept-source-agreements --accept-package-agreements
         - name: build 
           shell: cmd
           run: | 
