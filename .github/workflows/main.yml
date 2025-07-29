@@ -1,10 +1,38 @@
 name: Crossnotes Build actions
 on: 
   workflow_dispatch:
+    inputs:
+      version:
+        description: 'version of release'
+        required: true
+permissions: write-all
 jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+        - name: checkout
+          uses: actions/checkout@v4
+        - name: install swift toolchain
+          run: |
+            winget install --id Microsoft.VisualStudio.2022.Community --exact --force --custom "--add Microsoft.VisualStudio.Component.Windows11SDK.22000 --add Microsoft.VisualStudio.Component.VC.Tools.x86.x64 --add Microsoft.VisualStudio.Component.VC.Tools.ARM64"
+            winget install --id Swift.Toolchain -e
+        - name: install bundler
+          run: |
+            git clone https://github.com/stackotter/swift-bundler.git
+            cd swift-bundler
+            swift build -c release
+            echo "$(pwd)/.build/release" >> $GITHUB_PATH
+        - name: install winui backen dependencies
+          run: winget install --id Microsoft.WindowsSDK.10.0.17736
+        - name: build 
+          run: swift-bundler bundle -c release
+        - name: Upload artifact
+          uses: actions/upload-artifact@v4
+          with:
+           name: crossnotes-win
+           path: .build/bundler/crossnotes.exe
   build-linux:
      runs-on: ubuntu-latest
-     permissions: write-all
      steps: 
         - name: Checkout
           uses: actions/checkout@v4
@@ -73,8 +101,8 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: test1
-          name: test release 1
+          tag_name: ${{ inputs.version }}
+          name: crossnotes release ${{ inputs.version }}
           files: artifacts/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
