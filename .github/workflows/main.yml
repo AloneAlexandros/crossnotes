@@ -36,17 +36,6 @@ jobs:
           run: |
             cd swift-bundler
             swift build
-        - name: Save the cache for faster debugging
-          uses: actions/cache/save@v3
-          if: always() 
-          with:
-            path: |
-              .build
-              .swiftpm
-              swift-bundler/.build
-            key: windows-swiftpm-${{ hashFiles('Package.resolved') }}
-            restore-keys: |
-              windows-swiftpm-
         - name: windows sdk
           run: winget install --id Microsoft.WindowsSDK.10.0.17736 --accept-source-agreements --accept-package-agreements
         - name: build 
