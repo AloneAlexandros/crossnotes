@@ -51,7 +51,7 @@ jobs:
           run: winget install --id Microsoft.WindowsSDK.10.0.17736 --accept-source-agreements --accept-package-agreements
         - name: build 
           shell: cmd
-          run: .\swift-bundler\.build\debug\swift-bundler.exe" --verbose bundle -c release 
+          run: .\swift-bundler\.build\debug\swift-bundler.exe --verbose bundle -c release 
         - name: Upload artifact
           uses: actions/upload-artifact@v4
           with:
