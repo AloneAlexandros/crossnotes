@@ -39,7 +39,7 @@ jobs:
           shell: cmd
           run: | 
             "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat" ^
-            && swift-bundler/.build/debug/swift-bundler.exe bundle -c release --verbose
+            && ".\swift-bundler\.build\debug\swift-bundler.exe" bundle -c release --verbose
         - name: Upload artifact
           uses: actions/upload-artifact@v4
           with:
