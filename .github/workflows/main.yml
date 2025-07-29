@@ -19,6 +19,16 @@ jobs:
           with:
             branch: swift-6.1-release
             tag: 6.1-RELEASE
+        - name: Cache SwiftPM build
+          uses: actions/cache@v4
+          with:
+            path: |
+              .build
+              .swiftpm
+              swift-bundler/.build
+            key: windows-swiftpm-${{ hashFiles('Package.resolved') }}
+            restore-keys: |
+              windows-swiftpm-
         - name: install bundler
           shell: bash
           run: |
@@ -44,6 +54,16 @@ jobs:
           run: |
             sudo apt update
             sudo apt install libgtk-4-dev clang
+        - name: Cache SwiftPM build
+          uses: actions/cache@v4
+          with:
+            path: |
+              .build
+              .swiftpm
+              swift-bundler/.build
+            key: linux-swiftpm-${{ hashFiles('Package.resolved') }}
+            restore-keys: |
+              linux-swiftpm-
         - name: install bundler
           run: |
             git clone https://github.com/stackotter/swift-bundler.git
@@ -78,6 +98,15 @@ jobs:
           curl -o swift-bundler -L https://github.com/stackotter/swift-bundler/releases/download/v2.0.4/swift-bundler
           chmod +x ./swift-bundler
           cp ./swift-bundler /usr/local/bin
+       - name: Cache SwiftPM build
+         uses: actions/cache@v4
+         with:
+           path: |  
+             .build
+             .swiftpm
+           key: mac-swiftpm-${{ hashFiles('Package.resolved') }}
+           restore-keys: |
+             mac-swiftpm-
        - name: build 
          run: ./swift-bundler bundle -c release
        - name: Zip .app
