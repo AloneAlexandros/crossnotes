@@ -28,6 +28,7 @@ jobs:
             cd .build/debug
             ls
         - name: build 
+          shell: cmd
           run: | 
             call "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat"
             .\swift-bundler\.build\debug\swift-bundler.exe bundle -c release --verbose
