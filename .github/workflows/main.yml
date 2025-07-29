@@ -38,6 +38,9 @@ jobs:
             swift build
         - name: windows sdk
           run: winget install --id Microsoft.WindowsSDK.10.0.17736 --accept-source-agreements --accept-package-agreements
+        - name: Copy Swift runtime DLLs for bundler
+          run: |
+            cp "C:\Users\runneradmin\AppData\Local\Programs\Swift\bin\*.dll" swift-bundler/.build/debug/ 
         - name: build 
           shell: cmd
           run: | 
