@@ -23,6 +23,14 @@ jobs:
           branch: swift-6.1-release
           tag: 6.1-RELEASE
 
+      - name: Add Swift to PATH for job
+        shell: bash
+        run: |
+          SWIFT_BIN="$(dirname "$(which swift)")"
+          echo "$SWIFT_BIN" >> $GITHUB_PATH
+          echo "Swift bin path added to PATH: $SWIFT_BIN"
+          ls "$SWIFT_BIN"
+          
       - name: Download bundler
         shell: bash
         run: git clone https://github.com/stackotter/swift-bundler.git
