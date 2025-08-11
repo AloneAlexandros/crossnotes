@@ -6,124 +6,152 @@ on:
         description: 'version of release'
         required: true
 permissions: write-all
+
 jobs:
   build-windows:
-    runs-on: windows-2025
+    runs-on: windows-latest
     steps:
-        - name: checkout
-          uses: actions/checkout@v4
-        - name: Setup VS Dev Environment
-          uses: seanmiddleditch/gha-setup-vsdevenv@v5
-        - name: Setup Swift
-          uses: compnerd/gha-setup-swift@v0.3.0
-          with:
-            branch: swift-6.1-release
-            tag: 6.1-RELEASE
-        - name: download bundler
-          shell: bash
-          run: git clone https://github.com/stackotter/swift-bundler.git
-        - name: Cache SwiftPM build
-          uses: actions/cache@v4
-          with:
-            path: |
-              .build
-              .swiftpm
-              swift-bundler/.build
-            key: windows-swiftpm-${{ hashFiles('Package.resolved') }}
-            restore-keys: |
-              windows-swiftpm-
-        - name: build bundler
-          run: |
-            cd swift-bundler
-            swift build
-        - name: windows sdk
-          run: winget install --id Microsoft.WindowsSDK.10.0.17736 --accept-source-agreements --accept-package-agreements
-        - name: build 
-          shell: cmd
-          run: .\swift-bundler\.build\debug\swift-bundler.exe --verbose bundle -c release 
-        - name: Upload artifact
-          uses: actions/upload-artifact@v4
-          with:
-           name: crossnotes-win
-           path: .build/bundler/crossnotes.exe
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup VS Dev Environment
+        uses: seanmiddleditch/gha-setup-vsdevenv@v5
+
+      - name: Setup Swift
+        uses: compnerd/gha-setup-swift@v0.3.0
+        with:
+          branch: swift-6.1-release
+          tag: 6.1-RELEASE
+
+      - name: Download bundler
+        shell: bash
+        run: git clone https://github.com/stackotter/swift-bundler.git
+
+      - name: Cache SwiftPM build
+        uses: actions/cache@v4
+        with:
+          path: |
+            .build
+            .swiftpm
+            swift-bundler/.build
+          key: windows-swiftpm-${{ hashFiles('Package.resolved') }}
+          restore-keys: |
+            windows-swiftpm-
+
+      - name: Build bundler
+        shell: bash
+        run: |
+          cd swift-bundler
+          swift build
+          echo "$(pwd)/.build/debug" >> $GITHUB_PATH
+
+      - name: Install Windows SDK
+        run: winget install --id Microsoft.WindowsSDK.10.0 --accept-source-agreements --accept-package-agreements
+
+      - name: Build app
+        shell: bash
+        run: swift-bundler bundle -c release --verbose
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: crossnotes-win
+          path: .build/bundler/crossnotes.exe
+
   build-linux:
-     runs-on: ubuntu-latest
-     steps: 
-        - name: Checkout
-          uses: actions/checkout@v4
-        - name: install gtk
-          run: |
-            sudo apt update
-            sudo apt install libgtk-4-dev clang
-        - name: download bundler
-          run: git clone https://github.com/stackotter/swift-bundler.git
-        - name: Cache SwiftPM build
-          uses: actions/cache@v4
-          with:
-            path: |
-              .build
-              .swiftpm
-              swift-bundler/.build
-            key: linux-swiftpm-${{ hashFiles('Package.resolved') }}
-            restore-keys: |
-              linux-swiftpm-
-        - name: build bundler
-          run: |
-            cd swift-bundler
-            swift build
-            echo "$(pwd)/.build/debug" >> $GITHUB_PATH
-        - name: isntall patchelf
-          run: sudo apt install patchelf
-        - name: install appimage
-          run: |
-            wget https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage
-            chmod +x appimagetool-x86_64.AppImage
-            sudo mv appimagetool-x86_64.AppImage /usr/local/bin/appimagetool
-        - name: build 
-          run: swift-bundler bundle -c release --bundler linuxAppImage
-        - name: Zip .AppImage
-          run: |
-            cd .build/bundler
-            zip -r crossnotes-linux.zip crossnotes.AppImage
-        - name: Upload artifact
-          uses: actions/upload-artifact@v4
-          with:
-           name: crossnotes-linux
-           path: .build/bundler/crossnotes-linux.zip
+    runs-on: ubuntu-latest
+    steps: 
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install GTK & Clang
+        run: |
+          sudo apt update
+          sudo apt install libgtk-4-dev clang
+
+      - name: Download bundler
+        run: git clone https://github.com/stackotter/swift-bundler.git
+
+      - name: Cache SwiftPM build
+        uses: actions/cache@v4
+        with:
+          path: |
+            .build
+            .swiftpm
+            swift-bundler/.build
+          key: linux-swiftpm-${{ hashFiles('Package.resolved') }}
+          restore-keys: |
+            linux-swiftpm-
+
+      - name: Build bundler
+        run: |
+          cd swift-bundler
+          swift build
+          echo "$(pwd)/.build/debug" >> $GITHUB_PATH
+
+      - name: Install patchelf
+        run: sudo apt install patchelf
+
+      - name: Install appimagetool
+        run: |
+          wget https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage
+          chmod +x appimagetool-x86_64.AppImage
+          sudo mv appimagetool-x86_64.AppImage /usr/local/bin/appimagetool
+
+      - name: Build app
+        run: swift-bundler bundle -c release --bundler linuxAppImage
+
+      - name: Zip .AppImage
+        run: |
+          cd .build/bundler
+          zip -r crossnotes-linux.zip crossnotes.AppImage
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: crossnotes-linux
+          path: .build/bundler/crossnotes-linux.zip
+
   build-macos:
-     runs-on: macOS-latest
-     steps:
-       - name: checkout
-         uses: actions/checkout@v4
-       - name: download swift-bundler
-         run: |
+    runs-on: macOS-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download swift-bundler
+        run: |
           curl -o swift-bundler -L https://github.com/stackotter/swift-bundler/releases/download/v2.0.4/swift-bundler
           chmod +x ./swift-bundler
-          cp ./swift-bundler /usr/local/bin
-       - name: Cache SwiftPM build
-         uses: actions/cache@v4
-         with:
-           path: |  
-             .build
-             .swiftpm
-           key: mac-swiftpm-${{ hashFiles('Package.resolved') }}
-           restore-keys: |
-             mac-swiftpm-
-       - name: build 
-         run: ./swift-bundler bundle -c release
-       - name: Zip .app
-         run: |
-           cd .build/bundler
-           zip -r crossnotes-mac.zip crossnotes.app
-       - name: Upload artifact
-         uses: actions/upload-artifact@v4
-         with:
-           name: crossnotes-mac
-           path: .build/bundler/crossnotes-mac.zip
+          sudo mv ./swift-bundler /usr/local/bin
+
+      - name: Cache SwiftPM build
+        uses: actions/cache@v4
+        with:
+          path: |  
+            .build
+            .swiftpm
+          key: mac-swiftpm-${{ hashFiles('Package.resolved') }}
+          restore-keys: |
+            mac-swiftpm-
+
+      - name: Build app
+        run: swift-bundler bundle -c release
+
+      - name: Zip .app
+        run: |
+          cd .build/bundler
+          zip -r crossnotes-mac.zip crossnotes.app
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: crossnotes-mac
+          path: .build/bundler/crossnotes-mac.zip
+
   release:
-     runs-on: ubuntu-latest
-     needs: [build-macos, build-linux, build-windows]
-     steps:
+    runs-on: ubuntu-latest
+    needs: [build-macos, build-linux, build-windows]
+    steps:
       - name: Download all artifacts
         uses: actions/download-artifact@v4
         with:
