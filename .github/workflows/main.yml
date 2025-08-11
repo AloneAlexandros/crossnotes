@@ -9,7 +9,7 @@ permissions: write-all
 
 jobs:
   build-windows:
-    runs-on: windows-latest
+    runs-on: windows-2025
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -46,7 +46,7 @@ jobs:
           echo "$(pwd)/.build/debug" >> $GITHUB_PATH
 
       - name: Install Windows SDK
-        run: winget install --id Microsoft.WindowsSDK.10.0 --accept-source-agreements --accept-package-agreements
+        run: winget install --id Microsoft.WindowsSDK.10.0.17736 --accept-source-agreements --accept-package-agreements
 
       - name: Build app
         shell: bash
