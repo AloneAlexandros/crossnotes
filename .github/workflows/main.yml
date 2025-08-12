@@ -8,53 +8,6 @@ on:
 permissions: write-all
 
 jobs:
-  build-windows:
-    runs-on: windows-2025
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup VS Dev Environment
-        uses: seanmiddleditch/gha-setup-vsdevenv@v5
-
-      - name: Setup Swift
-        uses: compnerd/gha-setup-swift@v0.3.0
-        with:
-          branch: swift-6.1-release
-          tag: 6.1-RELEASE
-          
-      - name: Download bundler
-        shell: bash
-        run: git clone https://github.com/stackotter/swift-bundler.git
-      
-      - name: Cache SwiftPM build
-        uses: actions/cache@v4
-        with:
-          path: |
-            .build
-            .swiftpm
-            swift-bundler/.build
-          key: windows-swiftpm-${{ hashFiles('Package.resolved') }}
-          restore-keys: |
-            windows-swiftpm-
-      - name: Debug check
-        shell: cmd
-        run: |
-          call C:\"Program Files"\"Microsoft Visual Studio"\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
-          dir
-      - name: Build bundler
-        shell: bash
-        run: swift run -c release --package-path swift-bundler swift-bundler bundle -c release --verbose
-
-      - name: Install Windows SDK
-        run: winget install --id Microsoft.WindowsSDK.10.0.17736 --accept-source-agreements --accept-package-agreements
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: crossnotes-win
-          path: .build/bundler/crossnotes.exe
-
   build-linux:
     runs-on: ubuntu-latest
     steps: 
