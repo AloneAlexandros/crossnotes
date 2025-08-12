@@ -26,7 +26,7 @@ jobs:
       - name: Download bundler
         shell: bash
         run: git clone https://github.com/stackotter/swift-bundler.git
-
+      
       - name: Cache SwiftPM build
         uses: actions/cache@v4
         with:
@@ -37,7 +37,12 @@ jobs:
           key: windows-swiftpm-${{ hashFiles('Package.resolved') }}
           restore-keys: |
             windows-swiftpm-
-
+      - name: Debug check
+        shell: cmd
+        run: |
+          call C:\"Program Files"\"Microsoft Visual Studio"\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+          ls
+          exit 1
       - name: Build bundler
         shell: bash
         run: |
