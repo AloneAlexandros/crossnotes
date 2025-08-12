@@ -22,14 +22,6 @@ jobs:
         with:
           branch: swift-6.1-release
           tag: 6.1-RELEASE
-
-      - name: Add Swift to PATH for job
-        shell: bash
-        run: |
-          SWIFT_BIN="$(dirname "$(which swift)")"
-          echo "$SWIFT_BIN" >> $GITHUB_PATH
-          echo "Swift bin path added to PATH: $SWIFT_BIN"
-          ls "$SWIFT_BIN"
           
       - name: Download bundler
         shell: bash
@@ -57,8 +49,10 @@ jobs:
         run: winget install --id Microsoft.WindowsSDK.10.0.17736 --accept-source-agreements --accept-package-agreements
 
       - name: Build app
-        shell: bash
-        run: swift-bundler bundle -c release --verbose
+        shell: cmd
+        run: |
+          call C:\"Program Files"\"Microsoft Visual Studio"\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+          swift-bundler bundle -c release --verbose
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
