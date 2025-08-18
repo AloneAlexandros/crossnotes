@@ -8,59 +8,12 @@ struct MarkdownText: View{
     var body: some View{
         let lines = text.split(whereSeparator: \.isNewline)
         ForEach(lines){ line in
-            InLineMarkdowns(text: textWithoutPrefix(text: String(line)))
-                .font(chooseFont(text: String(line)))
+            InLineMarkdowns(text: String(line).textWithoutPrefix())
+                .font(String(line).chooseFont())
         }
     }
 
-    func chooseFont(text: String) -> Font
-    {
-        switch true{
-            case text.hasPrefix("# "):
-                return Font.system(size: 34)
-            case text.hasPrefix("## "):
-                return Font.system(size: 31)
-            case text.hasPrefix("### "):
-                return Font.system(size: 28)
-            case text.hasPrefix("#### "):
-                return Font.system(size: 25)
-            case text.hasPrefix("##### "):
-                return Font.system(size: 22)
-            case text.hasPrefix("###### "):
-                return Font.system(size: 19)
-            case text.hasPrefix("-# "):
-                return Font.system(size: 10)
-            default:
-               return Font.system(size: 16) 
-        }
-    }
-
-    func textWithoutPrefix(text: String) -> String{
-        var editableText = text
-        switch true{
-            case text.hasPrefix("# "):
-                return String(text.dropFirst(2))
-            case text.hasPrefix("## "):
-                return String(text.dropFirst(3))
-            case text.hasPrefix("### "):
-                return String(text.dropFirst(4))
-            case text.hasPrefix("#### "):
-                return String(text.dropFirst(5))
-            case text.hasPrefix("##### "):
-                return String(text.dropFirst(6))
-            case text.hasPrefix("###### "):
-                return String(text.dropFirst(7))
-            case text.hasPrefix("-# "):
-                return String(text.dropFirst(3))
-            case text.hasPrefix("- ") || text.hasPrefix("* ")||text.hasPrefix("+ "):
-                editableText.remove(at: editableText.startIndex)
-                editableText.remove(at: editableText.startIndex)
-                editableText = "・ " + editableText
-                return editableText
-            default:
-               return String(text)
-        }
-    }
+    
 }
 
 struct InLineMarkdowns: View{
@@ -88,24 +41,11 @@ struct Bold: View{
                         .emphasized()
                 }else{
                     
-                    Italic(text: stringToShow(string: string))
+                    Italic(text: string.stringToShow())
                     
                 }
             }
         }
-    }
-
-    func stringToShow(string:String) -> String
-    {
-        var stringToShow = string
-        if(string.first == " "){
-            stringToShow.remove(at: stringToShow.startIndex)
-        }
-        if(string.last == " ")
-        {
-            stringToShow = String(stringToShow.dropLast())
-        }
-        return stringToShow
     }
 }
 //i assume putting two italics in a row, like *text* *text* makes none of them italic, however this is no porblem since it's not expected for a user to do that anyway
@@ -124,23 +64,10 @@ struct Italic: View{
                         .padding(.leading, -5)
                 }else{
                     
-                    Text(stringToShow(string: string))
+                    Text(string.stringToShow())
                     .padding(.leading, -5)
                 }
             }
         }
-    }
-
-    func stringToShow(string:String) -> String
-    {
-        var stringToShow = string
-        if(string.first == " "){
-            stringToShow.remove(at: stringToShow.startIndex)
-        }
-        if(string.last == " ")
-        {
-            stringToShow = String(stringToShow.dropLast())
-        }
-        return stringToShow
     }
 }
