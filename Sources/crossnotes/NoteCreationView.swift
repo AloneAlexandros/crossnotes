@@ -12,6 +12,7 @@ struct NoteCreationView: View{
     var body: some View{
         if (!editingDirectories){
             TextField("Note title", text: $noteTitle)
+            .padding(5)
             HStack{
                 Text("Note directory: ")
                 Picker(of: database.savesDirectories, selection: $chosenFolder)
@@ -47,6 +48,7 @@ struct DirectoryEditView: View{
     @Binding var database: Database
     @State var newDirectory: String = ""
     @Binding var editingDirectories: Bool
+    @Environment(\.chooseFile) var chooseFile
     var body: some View{
         
         ForEach(database.configString) { directory in
@@ -59,12 +61,18 @@ struct DirectoryEditView: View{
             }
         }
         HStack{
-            TextField("Enter your directory", text: $newDirectory)
             Button("+ Add"){
+                Task {
+                    guard let file = await chooseFile(allowSelectingFiles: false, allowSelectingDirectories: true) else {
+                        return
+                    }
+                    database.configString.append(String.SubSequence(file.absoluteString.dropFirst(7)))
+                    database.updateDirectories(directories: database.configString)
+                }
                 //TODO: make it a filepicker, if it's possible
-                database.configString.append(String.SubSequence(newDirectory))
-                database.updateDirectories(directories: database.configString)
-                newDirectory = ""
+                // database.configString.append(String.SubSequence(newDirectory))
+                // database.updateDirectories(directories: database.configString)
+                // newDirectory = ""
             }
         }.padding(5)
         Text("if the directory does not exist, crossnotes will attempt to create it")
