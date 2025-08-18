@@ -15,29 +15,36 @@ struct NoteView: View{
         {
             HStack{
                 ZStack{
-                    RoundedRectangle(cornerRadius: 10)
-                    .foregroundColor(editing ? Color.gray.opacity(0.5) : Color.black.opacity(0))
-                    Text("✏️")
-                }.frame(width: 30, height: 30)
-                .onTapGesture {
-                    editing = true
+                    RoundedRectangle(cornerRadius: 5)
+                        .frame(width: 60, height: 30)
+                        .foregroundColor(Color.gray.opacity(0.3))
+                    HStack{
+                        ZStack{
+                            RoundedRectangle(cornerRadius: 5)
+                            .foregroundColor(editing ? Color.gray.opacity(0.5) : Color.black.opacity(0))
+                            Text("✏️")
+                        }.frame(width: 30, height: 30)
+                        .onTapGesture {
+                            editing = true
+                        }
+                        .padding(.trailing, -10)
+                        ZStack{
+                            RoundedRectangle(cornerRadius: 5)
+                            .foregroundColor(editing ?  Color.black.opacity(0) : Color.gray.opacity(0.5))
+                            Text("👁️")
+                        }.frame(width: 30, height: 30)
+                        .onTapGesture {
+                            editing = false
+                        }
+                    }
+                    
                 }
-                .padding(.trailing, -10)
-                ZStack{
-                    RoundedRectangle(cornerRadius: 10)
-                    .foregroundColor(editing ?  Color.black.opacity(0) : Color.gray.opacity(0.5))
-                    Text("👁️")
-                }.frame(width: 30, height: 30)
-                .onTapGesture {
-                    editing = false
-                }
-                Spacer()
                 Text(note.title)
                     .font(.noteTitle)
+                    .frame(maxWidth: .infinity)
                     .onTapGesture {
                         editingTitle = true
                     }  
-                Spacer()
                 Button("🗑️")
                 {
                     database.deleteNote(noteURL: note.noteURL)

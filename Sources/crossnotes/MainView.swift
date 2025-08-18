@@ -17,7 +17,7 @@ struct MainView: View{
             ScrollView{
                 ForEach(database.notes){ note in
                     ZStack{
-                        RoundedRectangle(cornerRadius: 10)
+                        RoundedRectangle(cornerRadius: 5)
                             .foregroundColor(selectedNote?.title == note.title ? Color.gray.opacity(0.5) : Color.black.opacity(0))
                         VStack{
                             Text(note.title)
