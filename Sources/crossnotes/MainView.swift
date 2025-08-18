@@ -6,11 +6,13 @@ struct MainView: View{
     @State var selectedNote: Note?
     @Binding var database: Database
     @State var creatingNote = false
+    @State var editingNote: Bool = false
     var body: some View{
         NavigationSplitView(sidebar: {
             Button("+ New note")
             {
                 creatingNote = true
+                editingNote = true
             }.padding(.top, 5)
             ScrollView{
                 ForEach(database.notes){ note in
@@ -34,7 +36,7 @@ struct MainView: View{
             if(!creatingNote)
             {
                 if selectedNote != nil{
-                    NoteView(note: Binding($selectedNote)!, database: $database, currentNote: $selectedNote)
+                    NoteView(note: Binding($selectedNote)!, database: $database, currentNote: $selectedNote, editing: $editingNote)
                         .padding(5)
                 }else{
                     Text("^-ω-^")

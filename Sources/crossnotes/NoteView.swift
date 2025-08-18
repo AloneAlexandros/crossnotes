@@ -9,7 +9,7 @@ struct NoteView: View{
     @State var previousNoteName = ""
     @State var editingTitle = false
     @Binding var currentNote: Note?
-    @State var editing = false
+    @Binding var editing: Bool
     var body: some View{
         if(!editingTitle)
         {
