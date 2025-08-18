@@ -116,6 +116,7 @@ jobs:
         with:
           tag_name: ${{ inputs.version }}
           name: crossnotes release ${{ inputs.version }}
+          body: "Sadly, I could not make a windows distributable. If you want to run the app on windows, you'll have to refer to the [build instructions!](https://github.com/AloneAlexandros/crossnotes/tree/ship1#developing)"
           files: artifacts/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
