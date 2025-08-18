@@ -77,7 +77,7 @@ struct NoteView: View{
                 }
             }
         }else{
-            MarkdownText(text: note.content)
+            MarkdownText(text: $note.content)
             .padding(.leading, 5)
             Spacer()
         }

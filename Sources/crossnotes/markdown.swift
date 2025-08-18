@@ -3,7 +3,7 @@ import DefaultBackend
 import Foundation
 
 struct MarkdownText: View{
-    @State var text: String
+    @Binding var text: String
     @State var fontToUse = Font.system(size: 16, design: .default)
     var body: some View{
         let lines = text.split(whereSeparator: \.isNewline)
