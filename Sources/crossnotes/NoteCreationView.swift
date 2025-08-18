@@ -64,6 +64,7 @@ struct DirectoryEditView: View{
                 //TODO: make it a filepicker, if it's possible
                 database.configString.append(String.SubSequence(newDirectory))
                 database.updateDirectories(directories: database.configString)
+                newDirectory = ""
             }
         }.padding(5)
         Text("if the directory does not exist, crossnotes will attempt to create it")

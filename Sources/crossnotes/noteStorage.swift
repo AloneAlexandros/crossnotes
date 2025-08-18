@@ -25,6 +25,17 @@ class Database : SwiftCrossUI.ObservableObject
                     print("this is canon now there is a save folder")
                 } catch {
                     print(error.localizedDescription)
+                    savesDirectories = savesDirectories.filter { $0 != directory }
+                    var newDirectories = ""
+                    for directory in savesDirectories{
+                        newDirectories += "\n" + directory.absoluteString.dropFirst(7)
+                    }
+                    do {
+                        try newDirectories.write(to: configFileURL, atomically: true, encoding: .utf8)
+                    } catch {
+                        assertionFailure("Failed writing to config: \(configFileURL), Error: " + error.localizedDescription)
+                    }
+                    initialize()
                 }
             }
         }
