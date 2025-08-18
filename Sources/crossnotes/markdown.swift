@@ -10,6 +10,7 @@ struct MarkdownText: View{
         ForEach(lines){ line in
             InLineMarkdowns(text: String(line).textWithoutPrefix())
                 .font(String(line).chooseFont())
+                .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
 

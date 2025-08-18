@@ -66,6 +66,7 @@ struct NoteView: View{
         if(editing){
             TextEditor(text: $note.content)
             .padding(.bottom, 20)
+            .font(Font.system(size: 16))
             .onChange(of: note.content) {
                 if(previousNoteName == note.title)
                 {
