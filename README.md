@@ -4,8 +4,8 @@ crossnotes is a simple notes app built with pure swift and the library [SwiftCro
 - [x] saves notes as .md files that can be easily synced
 - [x] supports basic markdown (bold, heading 1-6, lists, small text)
 - [x] italic markdown support
+- [x] multiple folder support
 - [ ] checkboxes
-- [ ] multiple folder support
 ## Developing
 To set up the development environment, you simply need to follow the [SwiftCrossUI setup guide](https://stackotter.github.io/swift-cross-ui/documentation/swiftcrossui/quick-start/). After that, running it is as simple as running `swift bundler run` on the project root.
 ### Building
